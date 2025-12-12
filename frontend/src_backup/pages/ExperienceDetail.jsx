@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../services/api';
-import { MapPin, Clock, Users, Star, ArrowLeft, Check, Phone } from 'lucide-react';
+import { MapPin, Clock, Users, Star, ArrowLeft, Check } from 'lucide-react';
 
 const ExperienceDetail = () => {
     const { id } = useParams();
@@ -94,24 +94,6 @@ const ExperienceDetail = () => {
                                 <span>Light refreshments</span>
                             </li>
                         </ul>
-                    </div>
-
-                    <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mb-8">
-                        <h3 className="font-semibold text-gray-900 mb-2">Host Contact</h3>
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
-                                {experience.host?.name?.charAt(0).toUpperCase() || 'H'}
-                            </div>
-                            <div>
-                                <p className="font-medium text-gray-900">{experience.host?.name || 'Local Host'}</p>
-                                {experience.host?.hostApplication?.phone && (
-                                    <div className="flex items-center text-sm text-gray-500 mt-0.5">
-                                        <Phone className="h-3 w-3 mr-1" />
-                                        {experience.host.hostApplication.phone}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
                     </div>
 
                     <div className="flex items-center justify-between p-6 bg-white shadow-lg rounded-xl border border-gray-100 sticky bottom-4">

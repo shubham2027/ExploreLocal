@@ -58,15 +58,7 @@ export const api = {
         return apiAxios.get('/bookings/mybookings');
     },
 
-    getHostStats: async () => {
-        return apiAxios.get('/bookings/host-stats');
-    },
-
     // User - Host Request
-    getUserStats: async () => {
-        return apiAxios.get('/users/stats');
-    },
-
     requestHost: async (data) => {
         return apiAxios.post('/users/request-host', data);
     },
@@ -76,16 +68,15 @@ export const api = {
     },
 
     // Admin
-    getAdminStats: async () => apiAxios.get('/admin/stats'),
-    getPendingHosts: async () => apiAxios.get('/admin/host-requests'),
-    approveHost: async (userId) => apiAxios.put(`/admin/approve-host/${userId}`),
-    rejectHost: async (userId) => apiAxios.put(`/admin/reject-host/${userId}`),
+    getAdminRequests: async () => {
+        return apiAxios.get('/admin/host-requests');
+    },
 
-    // Trips
-    getTrips: async () => apiAxios.get('/trips'),
-    getTripById: async (id) => apiAxios.get(`/trips/${id}`),
-    createTrip: async (data) => apiAxios.post('/trips', data),
-    updateTrip: async (id, data) => apiAxios.put(`/trips/${id}`, data),
-    addExperienceToTrip: async (tripId, experienceId) => apiAxios.post(`/trips/${tripId}/experience`, { experienceId }),
-    removeExperienceFromTrip: async (tripId, expId) => apiAxios.delete(`/trips/${tripId}/experience/${expId}`),
+    approveHost: async (userId) => {
+        return apiAxios.put(`/admin/approve-host/${userId}`);
+    },
+
+    rejectHost: async (userId) => {
+        return apiAxios.put(`/admin/reject-host/${userId}`);
+    }
 };

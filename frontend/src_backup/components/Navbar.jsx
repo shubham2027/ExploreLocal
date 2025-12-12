@@ -15,7 +15,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="fixed w-full top-0 z-50 transition-all duration-300 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <nav className="bg-white shadow-md sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16">
                     <div className="flex items-center">
@@ -29,7 +29,6 @@ const Navbar = () => {
                     <div className="hidden md:flex items-center space-x-8">
                         <Link to="/" className="text-gray-600 hover:text-indigo-600 font-medium transition">Home</Link>
                         <Link to="/explore" className="text-gray-600 hover:text-indigo-600 font-medium transition">Explore</Link>
-                        <Link to="/trips" className="text-gray-600 hover:text-indigo-600 font-medium transition">Trips</Link>
 
                         {isAuthenticated ? (
                             <div className="relative ml-4">
@@ -126,7 +125,6 @@ const Navbar = () => {
                         {isAuthenticated ? (
                             <>
                                 <Link to="/profile" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">My Profile</Link>
-                                <Link to="/trips" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Trips</Link>
                                 {isHost ? (
                                     <Link to="/host/dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 hover:bg-gray-50">Dashboard</Link>
                                 ) : (

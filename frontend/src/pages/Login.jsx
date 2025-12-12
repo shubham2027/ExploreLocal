@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Mail, Lock, Loader2 } from 'lucide-react';
+import { Mail, Lock, Loader2, ArrowRight } from 'lucide-react';
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
@@ -30,71 +30,93 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gray-50 px-4">
-            <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8">
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
-                    <p className="text-gray-600 mt-2">Sign in to continue your journey</p>
-                </div>
+        <div className="min-h-screen relative flex items-center justify-center p-4">
+            {/* Background Image */}
+            <div className="absolute inset-0 z-0">
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center"></div>
+                <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+            </div>
 
-                {error && (
-                    <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-6 text-sm">
-                        {error}
+            {/* Login Card */}
+            <div className="relative z-10 w-full max-w-md bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl overflow-hidden animate-fadeIn">
+                <div className="p-8 sm:p-10">
+                    <div className="text-center mb-8">
+                        <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
+                        <p className="text-gray-600 mt-2">Sign in to continue your adventure</p>
                     </div>
-                )}
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                        <div className="relative">
-                            <input
-                                type="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-                                placeholder="you@example.com"
-                            />
-                            <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    {error && (
+                        <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm font-medium border border-red-100 flex items-center gap-2 mb-6">
+                            <span>• {error}</span>
+                        </div>
+                    )}
+
+                    <form className="space-y-5" onSubmit={handleSubmit}>
+                        <div>
+                            <label className="text-sm font-bold text-gray-700 block mb-1.5">Email Address</label>
+                            <div className="relative group">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 rounded-xl transition outline-none font-medium"
+                                    placeholder="you@example.com"
+                                />
+                                <div className="absolute left-0 top-0 h-full w-11 flex items-center justify-center text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+                                    <Mail className="h-5 w-5" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                                <label className="text-sm font-bold text-gray-700 block">Password</label>
+                                <a href="#" className="text-xs font-bold text-indigo-600 hover:text-indigo-500">Forgot?</a>
+                            </div>
+                            <div className="relative group">
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full pl-11 pr-4 py-3 bg-white border border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 rounded-xl transition outline-none font-medium"
+                                    placeholder="••••••••"
+                                />
+                                <div className="absolute left-0 top-0 h-full w-11 flex items-center justify-center text-gray-400 group-focus-within:text-indigo-500 transition-colors">
+                                    <Lock className="h-5 w-5" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full bg-indigo-600 text-white py-3.5 rounded-xl font-bold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all shadow-lg hover:shadow-indigo-500/30 flex items-center justify-center gap-2"
+                        >
+                            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (
+                                <>Sign In <ArrowRight className="h-4 w-4" /></>
+                            )}
+                        </button>
+                    </form>
+
+                    <div className="mt-8 text-center">
+                        <p className="text-sm text-gray-600">
+                            Don't have an account?{' '}
+                            <Link to="/register" className="font-bold text-indigo-600 hover:text-indigo-500 transition hover:underline">
+                                Create an account
+                            </Link>
+                        </p>
+                    </div>
+
+                    <div className="mt-8 pt-6 border-t border-gray-200/60">
+                        <div className="text-xs text-gray-500 text-center space-y-1">
+                            <p>Demo User: user@example.com / password</p>
+                            <p>Demo Host: host@example.com / password</p>
                         </div>
                     </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                        <div className="relative">
-                            <input
-                                type="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-                                placeholder="••••••••"
-                            />
-                            <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                        </div>
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center"
-                    >
-                        {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Sign In'}
-                    </button>
-                </form>
-
-                <div className="mt-6 text-center text-sm text-gray-600">
-                    Don't have an account?{' '}
-                    <Link to="/register" className="text-indigo-600 font-medium hover:underline">
-                        Sign up
-                    </Link>
-                </div>
-
-                <div className="mt-4 text-center text-xs text-gray-400">
-                    <p>Demo User: user@example.com / password</p>
-                    <p>Demo Host: host@example.com / password</p>
                 </div>
             </div>
         </div>

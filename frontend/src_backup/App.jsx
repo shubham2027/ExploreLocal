@@ -17,16 +17,13 @@ import UserProfile from './pages/UserProfile';
 
 import AdminDashboard from './pages/AdminDashboard';
 
-import MyTrips from './pages/MyTrips';
-import TripDetails from './pages/TripDetails';
-
 function App() {
   return (
     <AuthProvider>
       <Router>
         <div className="flex flex-col min-h-screen bg-gray-50">
           <Navbar />
-          <main className="flex-grow pt-24">
+          <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/explore" element={<Explore />} />
@@ -39,10 +36,6 @@ function App() {
               <Route path="/booking/:id" element={<BookingPage />} />
               <Route path="/profile" element={<UserProfile />} />
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
-
-              {/* Trip Routes */}
-              <Route path="/trips" element={<MyTrips />} />
-              <Route path="/trips/:id" element={<TripDetails />} />
             </Routes>
           </main>
           <Footer />
