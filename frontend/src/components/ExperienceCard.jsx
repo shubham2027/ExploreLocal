@@ -48,7 +48,7 @@ const ExperienceCard = ({ experience }) => {
                     <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
                         <div className="flex flex-col">
                             <span className="text-xs text-gray-500">From</span>
-                            <span className="text-lg font-bold text-indigo-600">${experience.price}</span>
+                            <span className="text-lg font-bold text-indigo-600">₹{experience.price}</span>
                         </div>
                         <Link
                             to={`/experience/${experience._id}`}
