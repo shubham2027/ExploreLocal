@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, ArrowLeft, Trash2, Clock, Loader2, Users, DollarSign, PieChart } from 'lucide-react';
 import { api } from '../services/api';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
 const TripDetails = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [trip, setTrip] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         fetchTrip();
@@ -20,6 +24,17 @@ const TripDetails = () => {
             console.error("Failed to fetch trip", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDeleteTrip = async () => {
+        setIsDeleting(true);
+        try {
+            await api.deleteTrip(id);
+            navigate('/trips');
+        } catch (error) {
+            console.error("Failed to delete trip", error);
+            setIsDeleting(false);
         }
     };
 
@@ -65,9 +80,17 @@ const TripDetails = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <Link to="/trips" className="flex items-center text-gray-500 hover:text-indigo-600 mb-6 transition">
-                <ArrowLeft className="h-4 w-4 mr-2" /> Back to My Trips
-            </Link>
+            <div className="flex justify-between items-center mb-6">
+                <Link to="/trips" className="flex items-center text-gray-500 hover:text-indigo-600 transition">
+                    <ArrowLeft className="h-4 w-4 mr-2" /> Back to My Trips
+                </Link>
+                <button
+                    onClick={() => setShowDeleteModal(true)}
+                    className="flex items-center gap-2 text-red-500 hover:text-red-700 font-medium px-4 py-2 rounded-lg hover:bg-red-50 transition"
+                >
+                    <Trash2 className="h-4 w-4" /> Delete Trip
+                </button>
+            </div>
 
             {/* Header */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8 relative overflow-hidden">
@@ -93,6 +116,15 @@ const TripDetails = () => {
                 </div>
                 <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-indigo-50 to-transparent pointer-events-none" />
             </div>
+
+            <DeleteConfirmationModal
+                isOpen={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleDeleteTrip}
+                isDeleting={isDeleting}
+                title="Delete Trip"
+                message={`Are you sure you want to delete "${trip.title}"? This action cannot be undone.`}
+            />
 
             {/* Itinerary Board */}
             <div className="flex flex-col lg:flex-row gap-8">
@@ -129,7 +161,7 @@ const TripDetails = () => {
                                                 <div className="flex-grow">
                                                     <h4 className="font-bold text-lg text-gray-900 mb-1">{item.experience?.title}</h4>
                                                     <p className="text-sm text-gray-500 line-clamp-2">{item.experience?.description}</p>
-                                                    <div className="mt-2 text-indigo-600 font-bold text-sm">${item.experience?.price}</div>
+                                                    <div className="mt-2 text-indigo-600 font-bold text-sm">₹{item.experience?.price}</div>
                                                 </div>
                                                 <div className="flex sm:flex-col gap-2">
                                                     <Link
@@ -176,13 +208,13 @@ const TripDetails = () => {
                                     <DollarSign className="h-4 w-4 mr-2" />
                                     Cost / Person
                                 </div>
-                                <div className="font-bold text-gray-900">${costPerPerson.toLocaleString()}</div>
+                                <div className="font-bold text-gray-900">₹{costPerPerson.toLocaleString()}</div>
                             </div>
 
                             <div className="pt-4 border-t border-gray-100">
                                 <div className="flex items-center justify-between">
                                     <div className="text-gray-500 font-medium">Total Cost</div>
-                                    <div className="text-2xl font-bold text-indigo-600">${totalTripCost.toLocaleString()}</div>
+                                    <div className="text-2xl font-bold text-indigo-600">₹{totalTripCost.toLocaleString()}</div>
                                 </div>
                                 <p className="text-xs text-gray-400 mt-1 text-right">
                                     Based on {trip.experiences.length} experiences

@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { api } from '../services/api';
 import { MapPin, Clock, Users, Star, ArrowLeft, Check, Phone } from 'lucide-react';
 
 const ExperienceDetail = () => {
     const { id } = useParams();
+    const location = useLocation();
     const [experience, setExperience] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const backLink = location.state?.search ? `/explore${location.state.search}` : '/explore';
 
     useEffect(() => {
         const fetchExperience = async () => {
@@ -30,7 +33,7 @@ const ExperienceDetail = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <Link to="/explore" className="inline-flex items-center text-gray-600 hover:text-indigo-600 mb-6 transition">
+            <Link to={backLink} className="inline-flex items-center text-gray-600 hover:text-indigo-600 mb-6 transition">
                 <ArrowLeft className="h-4 w-4 mr-2" /> Back to Explore
             </Link>
 
@@ -117,7 +120,7 @@ const ExperienceDetail = () => {
                     <div className="flex items-center justify-between p-6 bg-white shadow-lg rounded-xl border border-gray-100 sticky bottom-4">
                         <div>
                             <p className="text-sm text-gray-500">Price per person</p>
-                            <p className="text-3xl font-bold text-indigo-600">${experience.price}</p>
+                            <p className="text-3xl font-bold text-indigo-600">₹{experience.price}</p>
                         </div>
                         <Link to={`/booking/${experience._id}`} className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5 inline-block text-center">
                             Book Now

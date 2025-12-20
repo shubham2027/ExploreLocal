@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
 
 const FilterPanel = ({ filters, setFilters, categories }) => {
   const handleChange = (e) => {
@@ -25,9 +25,9 @@ const FilterPanel = ({ filters, setFilters, categories }) => {
             value={filters.search}
             onChange={handleChange}
             placeholder="Search..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+            className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition bg-gray-50 hover:bg-white hover:border-indigo-300 text-gray-700 font-medium"
           />
-          <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-3 top-3.5 h-5 w-5 text-gray-400" />
         </div>
       </div>
 
@@ -36,19 +36,47 @@ const FilterPanel = ({ filters, setFilters, categories }) => {
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Category
         </label>
-        <select
-          name="category"
-          value={filters.category}
-          onChange={handleChange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition bg-white"
-        >
-          <option value="">All Categories</option>
-          {categories.map((cat, index) => (
-            <option key={index} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+            <select
+            name="category"
+            value={filters.category}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition bg-gray-50 hover:bg-white hover:border-indigo-300 appearance-none cursor-pointer text-gray-700 font-medium"
+            >
+            <option value="">All Categories</option>
+            {categories.map((cat, index) => (
+                <option key={index} value={cat}>
+                {cat}
+                </option>
+            ))}
+            </select>
+            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+        </div>
+      </div>
+
+      {/* State Filter */}
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          State
+        </label>
+        <div className="relative">
+            <select
+            name="state"
+            value={filters.state || ''}
+            onChange={handleChange}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition bg-gray-50 hover:bg-white hover:border-indigo-300 appearance-none cursor-pointer text-gray-700 font-medium"
+            >
+            <option value="">All States</option>
+            {[
+                "Punjab", "Haryana", "Himachal Pradesh"
+            ].map((state, index) => (
+                <option key={index} value={state}>
+                {state}
+                </option>
+            ))}
+            </select>
+            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" />
+        </div>
       </div>
 
       {/* Price Range */}
@@ -74,7 +102,7 @@ const FilterPanel = ({ filters, setFilters, categories }) => {
 
       {/* Reset Button */}
       <button
-        onClick={() => setFilters({ search: "", category: "", maxPrice: 5000 })}
+        onClick={() => setFilters({ search: "", category: "", maxPrice: 5000, state: "" })}
         className="w-full py-2 text-sm text-indigo-600 font-medium hover:text-indigo-800 transition border border-indigo-100 rounded-lg hover:bg-indigo-50"
       >
         Reset Filters

@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { CheckCircle, Loader2, Sparkles, DollarSign, Users, Globe } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { CheckCircle, Loader2, Sparkles, DollarSign, Users, Globe, ShieldCheck } from 'lucide-react';
 import { api } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const HostApply = () => {
+    const { isHost } = useAuth();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [formData, setFormData] = useState({
@@ -36,6 +38,26 @@ const HostApply = () => {
             setLoading(false);
         }
     };
+
+    if (isHost) {
+        return (
+            <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gray-50 px-4">
+                <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-12 text-center border border-gray-100 animate-fadeIn">
+                    <div className="w-20 h-20 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                        <ShieldCheck className="h-10 w-10 text-indigo-600" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-gray-900 mb-3">You're Already a Host!</h2>
+                    <p className="text-gray-600 text-lg mb-8">You have already been approved as a host. You can manage your experiences from your dashboard.</p>
+                    <Link 
+                        to="/host/dashboard"
+                        className="block w-full bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200"
+                    >
+                        Go to Dashboard
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     if (success) {
         return (

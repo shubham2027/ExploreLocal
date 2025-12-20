@@ -1,20 +1,21 @@
 import { MapPin, Star, Clock, Heart, CalendarPlus } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import AddToTripModal from './AddToTripModal';
 
 const ExperienceCard = ({ experience }) => {
     const [showAddModal, setShowAddModal] = useState(false);
+    const location = useLocation();
 
     return (
         <>
-            <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition duration-300 overflow-hidden border border-gray-100 flex flex-col h-full group relative">
+            <div className="bg-white rounded-xl shadow-sm hover:shadow-xl hover:border-indigo-500 hover:ring-4 hover:ring-indigo-500/10 transition-all duration-300 overflow-hidden border border-gray-100 flex flex-col h-full group relative">
                 <div className="relative h-48 overflow-hidden">
                     <img
                         src={experience.image}
                         alt={experience.title}
                         onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'; }}
-                        className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                        className="w-full h-full object-cover transition duration-500"
                     />
                     <div className="absolute top-3 right-3 bg-white px-2 py-1 rounded-lg text-xs font-bold shadow-sm text-indigo-600">
                         {experience.category}
@@ -52,6 +53,7 @@ const ExperienceCard = ({ experience }) => {
                         </div>
                         <Link
                             to={`/experience/${experience._id}`}
+                            state={{ search: location.search }}
                             className="bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition"
                         >
                             View Details

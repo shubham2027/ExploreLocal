@@ -88,4 +88,5 @@ export const api = {
     updateTrip: async (id, data) => apiAxios.put(`/trips/${id}`, data),
     addExperienceToTrip: async (tripId, experienceId) => apiAxios.post(`/trips/${tripId}/experience`, { experienceId }),
     removeExperienceFromTrip: async (tripId, expId) => apiAxios.delete(`/trips/${tripId}/experience/${expId}`),
+    deleteTrip: async (id) => apiAxios.delete(`/trips/${id}`),
 };

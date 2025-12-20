@@ -6,7 +6,8 @@ import {
     getTripById,
     addExperienceToTrip,
     removeExperienceFromTrip,
-    updateTrip
+    updateTrip,
+    deleteTrip
 } from '../controllers/tripController.js';
 
 const router = express.Router();
@@ -17,7 +18,8 @@ router.route('/')
 
 router.route('/:id')
     .get(protect, getTripById)
-    .put(protect, updateTrip);
+    .put(protect, updateTrip)
+    .delete(protect, deleteTrip);
 
 router.route('/:id/experience')
     .post(protect, addExperienceToTrip);

@@ -124,15 +124,15 @@ const BookingPage = () => {
                     <div className="bg-gray-50 p-4 rounded-lg">
                         <div className="flex justify-between mb-2">
                             <span className="text-gray-600">Price per person</span>
-                            <span className="font-medium">${PRICE_PER_PERSON}</span>
+                            <span className="font-medium">₹{PRICE_PER_PERSON}</span>
                         </div>
                         <div className="flex justify-between mb-2">
                             <span className="text-gray-600">Service fee</span>
-                            <span className="font-medium">${SERVICE_FEE}</span>
+                            <span className="font-medium">₹{SERVICE_FEE}</span>
                         </div>
                         <div className="border-t border-gray-200 pt-2 mt-2 flex justify-between font-bold text-lg">
                             <span>Total</span>
-                            <span>${totalPrice}</span>
+                            <span>₹{totalPrice}</span>
                         </div>
                     </div>
 

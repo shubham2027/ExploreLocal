@@ -169,7 +169,7 @@ const UserProfile = () => {
                                                                 <span className='flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-lg'>
                                                                     <User className="h-3 w-3" /> {booking.guests}
                                                                 </span>
-                                                                <span className='font-bold text-gray-900'>Total: ${booking.totalPrice}</span>
+                                                                <span className='font-bold text-gray-900'>Total: ₹{booking.totalPrice}</span>
                                                             </div>
                                                             <button className="text-indigo-600 font-semibold text-sm hover:underline">
                                                                 View Ticket

@@ -100,7 +100,7 @@ const AddExperience = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="text-sm font-bold text-gray-700 mb-2 block">Price per person ($)</label>
+                                    <label className="text-sm font-bold text-gray-700 mb-2 block">Price per person (₹)</label>
                                     <div className="relative">
                                         <input
                                             type="number"

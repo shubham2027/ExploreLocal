@@ -33,7 +33,7 @@ const HostDashboard = () => {
 
     // Mock Stats
     const statCards = [
-        { label: 'Total Earnings', value: `$${stats.totalEarnings.toLocaleString()}`, icon: DollarSign, color: 'text-green-600', bg: 'bg-green-100' },
+        { label: 'Total Earnings', value: `₹${stats.totalEarnings.toLocaleString()}`, icon: DollarSign, color: 'text-green-600', bg: 'bg-green-100' },
         { label: 'Active Bookings', value: stats.activeBookings, icon: Calendar, color: 'text-blue-600', bg: 'bg-blue-100' },
         { label: 'Total Guests', value: stats.totalGuests, icon: Users, color: 'text-purple-600', bg: 'bg-purple-100' },
     ];
@@ -112,7 +112,7 @@ const HostDashboard = () => {
                                                         <h3 className="text-lg font-bold text-gray-900 mb-1">{exp.title}</h3>
                                                         <div className="flex items-center gap-3 text-sm text-gray-500">
                                                             <span className="bg-gray-100 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide">{exp.category}</span>
-                                                            <span>${exp.price} / person</span>
+                                                            <span>₹{exp.price} / person</span>
                                                         </div>
                                                     </div>
                                                     <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">

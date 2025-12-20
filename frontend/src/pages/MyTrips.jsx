@@ -2,17 +2,21 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Calendar, MapPin, ArrowRight, Loader2, Plane, Globe } from 'lucide-react';
 import { api } from '../services/api';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
 const MyTrips = () => {
     const [trips, setTrips] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
+    
+    // Delete Modal State
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [tripToDelete, setTripToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     // New Trip Form State
     const [formData, setFormData] = useState({
         title: '',
-        location: '',
-        startDate: '',
         location: '',
         startDate: '',
         endDate: '',
@@ -47,6 +51,26 @@ const MyTrips = () => {
             console.error("Failed to create trip", error);
         } finally {
             setCreateLoading(false);
+        }
+    };
+
+    const confirmDelete = (trip) => {
+        setTripToDelete(trip);
+        setShowDeleteModal(true);
+    };
+
+    const handleDeleteTrip = async () => {
+        if (!tripToDelete) return;
+        setIsDeleting(true);
+        try {
+            await api.deleteTrip(tripToDelete._id);
+            await fetchTrips();
+            setShowDeleteModal(false);
+            setTripToDelete(null);
+        } catch (error) {
+            console.error("Failed to delete trip", error);
+        } finally {
+            setIsDeleting(false);
         }
     };
 
@@ -146,7 +170,15 @@ const MyTrips = () => {
                                     </div>
 
                                     <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-50">
-                                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Boarding</span>
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                confirmDelete(trip);
+                                            }}
+                                            className="text-xs font-bold text-red-400 hover:text-red-600 uppercase tracking-widest transition-colors"
+                                        >
+                                            Delete
+                                        </button>
                                         <span className="flex items-center text-indigo-600 font-bold text-sm group-hover:translate-x-1 transition-transform">
                                             Manage <ArrowRight className="h-4 w-4 ml-1" />
                                         </span>
@@ -156,6 +188,15 @@ const MyTrips = () => {
                         ))}
                     </div>
                 )}
+
+                <DeleteConfirmationModal
+                    isOpen={showDeleteModal}
+                    onClose={() => setShowDeleteModal(false)}
+                    onConfirm={handleDeleteTrip}
+                    isDeleting={isDeleting}
+                    title="Delete Trip"
+                    message={`Are you sure you want to delete "${tripToDelete?.title}"? This action cannot be undone.`}
+                />
 
                 {/* Create Trip Modal */}
                 {showModal && (

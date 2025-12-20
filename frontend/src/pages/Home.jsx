@@ -2,9 +2,11 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Loader2, Compass, Map, CreditCard, Heart } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { api } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import ExperienceCard from '../components/ExperienceCard';
 
 const Home = () => {
+    const { isHost } = useAuth();
     const [experiences, setExperiences] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -58,7 +60,7 @@ const Home = () => {
                         Explore the world like a local
                     </span>
                     <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-tight">
-                        Discover the <span className="text-indigo-400">Soul</span> <br />
+                        Discover the <span className="text-yellow-500">Soul</span> <br />
                         of Every City
                     </h1>
                     <p className="text-xl md:text-2xl text-gray-200 mb-10 max-w-2xl mx-auto font-light">
@@ -73,12 +75,21 @@ const Home = () => {
                             Start Exploring
                             <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                         </Link>
-                        <Link
-                            to="/host/apply"
-                            className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/20 transition-all duration-300 flex items-center justify-center"
-                        >
-                            Become a Host
-                        </Link>
+                        {isHost ? (
+                            <Link
+                                to="/host/dashboard"
+                                className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/20 transition-all duration-300 flex items-center justify-center"
+                            >
+                                Host Dashboard
+                            </Link>
+                        ) : (
+                            <Link
+                                to="/host/apply"
+                                className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white/20 transition-all duration-300 flex items-center justify-center"
+                            >
+                                Become a Host
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>

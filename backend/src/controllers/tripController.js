@@ -132,11 +132,30 @@ const updateTrip = async (req, res) => {
     }
 };
 
+// @desc    Delete trip
+// @route   DELETE /api/trips/:id
+// @access  Private
+const deleteTrip = async (req, res) => {
+    try {
+        const trip = await Trip.findById(req.params.id);
+
+        if (trip && trip.user.toString() === req.user._id.toString()) {
+            await trip.deleteOne();
+            res.json({ message: 'Trip removed' });
+        } else {
+            res.status(404).json({ message: 'Trip not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 export {
     createTrip,
     getTrips,
     getTripById,
     addExperienceToTrip,
     removeExperienceFromTrip,
-    updateTrip
+    updateTrip,
+    deleteTrip
 };
