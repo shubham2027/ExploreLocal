@@ -1,11 +1,15 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Loader2, ArrowLeft, Type, AlignLeft, DollarSign, Tag, MapPin, Image as ImageIcon } from 'lucide-react';
 import { api } from '../services/api';
 
 const AddExperience = () => {
     const navigate = useNavigate();
+    const { id } = useParams();
+    const isEditMode = !!id;
+    
     const [loading, setLoading] = useState(false);
+    const [fetching, setFetching] = useState(isEditMode);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -14,6 +18,32 @@ const AddExperience = () => {
         location: '',
         image: ''
     });
+
+    useEffect(() => {
+        if (isEditMode) {
+            const fetchExperience = async () => {
+                try {
+                    const response = await api.getExperienceById(id);
+                    const exp = response.data;
+                    setFormData({
+                        title: exp.title,
+                        description: exp.description,
+                        price: exp.price,
+                        category: exp.category,
+                        location: exp.location,
+                        image: exp.image
+                    });
+                } catch (error) {
+                    console.error("Failed to fetch experience details", error);
+                    alert("Failed to load experience details.");
+                    navigate('/host/dashboard');
+                } finally {
+                    setFetching(false);
+                }
+            };
+            fetchExperience();
+        }
+    }, [id, isEditMode, navigate]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,14 +58,29 @@ const AddExperience = () => {
                 ...formData,
                 image: formData.image || "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
             };
-            await api.addExperience(dataToSubmit);
+            
+            if (isEditMode) {
+                await api.updateExperience(id, dataToSubmit);
+            } else {
+                await api.addExperience(dataToSubmit);
+            }
+            
             navigate('/host/dashboard');
         } catch (error) {
-            console.error("Failed to add experience", error);
+            console.error("Failed to save experience", error);
+            alert("Failed to save experience. Please try again.");
         } finally {
             setLoading(false);
         }
     };
+
+    if (fetching) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <Loader2 className="h-10 w-10 animate-spin text-indigo-600" />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 pb-12">
@@ -45,7 +90,7 @@ const AddExperience = () => {
                         <ArrowLeft className="h-5 w-5" />
                     </button>
                     <div>
-                        <h1 className="text-xl font-bold text-gray-900">Create New Experience</h1>
+                        <h1 className="text-xl font-bold text-gray-900">{isEditMode ? 'Edit Experience' : 'Create New Experience'}</h1>
                         <p className="text-xs text-gray-500">Step 1 of 1</p>
                     </div>
                 </div>
@@ -191,7 +236,7 @@ const AddExperience = () => {
                             disabled={loading}
                             className="bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 transform hover:-translate-y-0.5 min-w-[200px] flex justify-center"
                         >
-                            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Create Experience'}
+                            {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (isEditMode ? 'Update Experience' : 'Create Experience')}
                         </button>
                     </div>
                 </form>

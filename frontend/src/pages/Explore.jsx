@@ -98,130 +98,129 @@ const Explore = () => {
             </div>
         );
     }
-
     return (
-        <div className="h-[calc(100vh-4rem)] flex flex-col bg-gray-50">
-            {/* Header Section */}
-            <div className="bg-white border-b border-gray-100 flex-none z-30">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <h1 className="text-3xl font-bold text-gray-900">Explore Experiences</h1>
-                            <p className="text-gray-500 mt-1">Discover unique activities hosted by locals</p>
+        <div className="h-[calc(150vh-4rem)] bg-gray-50 flex flex-col">
+            {/* Mobile Filter Modal */}
+            {showMobileFilters && (
+                <div className="fixed inset-0 z-50 lg:hidden">
+                    <div 
+                        className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+                        onClick={() => setShowMobileFilters(false)}
+                    ></div>
+                    <div className="absolute inset-x-4 top-20 bottom-20 bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-slideUp">
+                        <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">
+                                <SlidersHorizontal className="h-5 w-5 text-indigo-600" />
+                                Filters
+                            </h3>
+                            <button 
+                                onClick={() => setShowMobileFilters(false)}
+                                className="p-2 bg-white rounded-full text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition shadow-sm"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
                         </div>
+                        <div className="flex-grow overflow-y-auto p-4">
+                            <FilterPanel
+                                filters={filters}
+                                setFilters={setFilters}
+                                categories={categories}
+                                isMobile={true}
+                            />
+                        </div>
+                        <div className="p-4 border-t border-gray-100 bg-gray-50">
+                            <button
+                                onClick={() => setShowMobileFilters(false)}
+                                className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition"
+                            >
+                                Show {filteredExperiences.length} Results
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
-                        {/* Mobile Filter Toggle */}
-                        <button
-                            className="md:hidden flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg font-medium"
-                            onClick={() => setShowMobileFilters(!showMobileFilters)}
-                        >
-                            <SlidersHorizontal className="h-4 w-4" /> Filters
-                        </button>
+            {/* Fixed Header Section */}
+            <div className="bg-white border-b border-gray-200 z-30 shadow-sm flex-shrink-0">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <h1 className="text-2xl font-bold text-gray-900">Explore Experiences</h1>
+                        
+                        <div className="flex items-center gap-3">
+                            <button 
+                                onClick={() => setShowMobileFilters(true)}
+                                className="lg:hidden flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-200 font-medium text-gray-700 hover:bg-gray-50 transition"
+                            >
+                                <SlidersHorizontal className="h-5 w-5 text-indigo-600" />
+                                Filters
+                            </button>
+                            
+                            <button className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-200 font-medium text-gray-700 hover:bg-gray-50 transition">
+                                <Map className="h-5 w-5 text-indigo-600" />
+                                <span className="hidden sm:inline">Show Map (Beta)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Sort Bar */}
+                    <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-gray-100">
+                        <p className="text-gray-600 font-medium text-sm">
+                            Showing <span className="text-gray-900 font-bold">{filteredExperiences.length}</span> results
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-500 hidden sm:inline">Sort by:</span>
+                            <select
+                                value={filters.sort}
+                                onChange={(e) => setFilters({ ...filters, sort: e.target.value })}
+                                className="bg-gray-50 border-none text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 font-bold shadow-sm cursor-pointer hover:bg-gray-100 transition"
+                            >
+                                <option>Recommended</option>
+                                <option>Price: Low to High</option>
+                                <option>Price: High to Low</option>
+                                <option>Newest First</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="flex-grow overflow-hidden">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
-                    <div className="flex flex-col lg:flex-row gap-8 h-full">
-                        {/* Sidebar Filters - Independent Scroll */}
-                        <div className={`lg:w-1/4 h-full overflow-y-auto no-scrollbar pb-8 ${showMobileFilters ? 'block absolute inset-0 z-40 bg-white p-4' : 'hidden lg:block'}`}>
-                            <div className="py-8 space-y-8">
-                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                                    <div className="flex items-center gap-2 mb-6 text-gray-900 font-bold text-lg">
-                                        <SlidersHorizontal className="h-5 w-5 text-indigo-600" />
-                                        Filters
-                                    </div>
-                                    <FilterPanel
-                                        filters={filters}
-                                        setFilters={setFilters}
-                                        categories={categories}
-                                    />
-                                </div>
+            {/* Independent Scrollable Content */}
+            <div className="flex-1 overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex gap-8">
+                    {/* Sidebar Filters (Desktop) - Independently Scrollable */}
+                    <div className="hidden lg:block w-80 flex-shrink-0 h-full overflow-y-auto py-6 pr-2 custom-scrollbar">
+                        <FilterPanel 
+                            filters={filters} 
+                            setFilters={setFilters} 
+                            categories={categories} 
+                        />
+                    </div>
 
-                                {/* Promo / Map Card Placeholder */}
-                                <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-6 text-white text-center shadow-lg hidden lg:block">
-                                    <div className="bg-white/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-                                        <Map className="h-6 w-6 text-white" />
-                                    </div>
-                                    <h3 className="font-bold text-lg mb-2">Interactive Map</h3>
-                                    <p className="text-indigo-100 text-sm mb-4">View all experiences on our interactive map to find what's near you.</p>
-                                    <button className="bg-white text-indigo-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-indigo-50 transition w-full">
-                                        Open Map (beta)
-                                    </button>
-                                </div>
+                    {/* Main Results - Independently Scrollable */}
+                    <div className="p-1 flex-1 h-full overflow-y-auto py-6 custom-scrollbar">
+                        {filteredExperiences.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
+                                {filteredExperiences.map((experience) => (
+                                    <ExperienceCard key={experience._id} experience={experience} />
+                                ))}
                             </div>
-                        </div>
-
-                        {/* Main Content Grid - Independent Scroll */}
-                        <div className="lg:w-3/4 w-full h-full overflow-y-auto no-scrollbar pb-8">
-                            <div className="py-8">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h2 className="text-gray-700 font-semibold">
-                                        Showing {filteredExperiences.length} results
-                                    </h2>
-                                    <div className="flex items-center gap-3 text-sm text-gray-500">
-                                        <span className="hidden sm:inline">Sort by:</span>
-                                        <div className="relative">
-                                            <select 
-                                                value={filters.sort}
-                                                onChange={(e) => setFilters(prev => ({ ...prev, sort: e.target.value }))}
-                                                className="bg-white border border-gray-200 text-gray-700 font-medium py-2 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer appearance-none shadow-sm hover:border-indigo-300 transition"
-                                            >
-                                                <option>Recommended</option>
-                                                <option>Price: Low to High</option>
-                                                <option>Price: High to Low</option>
-                                                <option>Newest First</option>
-                                            </select>
-                                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    </div>
+                        ) : (
+                            <div className="text-center py-20 bg-white rounded-3xl border border-gray-100 shadow-sm">
+                                <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <Search className="h-10 w-10 text-gray-400" />
                                 </div>
-
-                                {filters.state && !["Punjab", "Haryana", "Himachal Pradesh"].includes(filters.state) ? (
-                                    <div className="text-center py-24 bg-white rounded-3xl border border-dashed border-gray-200">
-                                        <div className="bg-indigo-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                                            <Map className="h-10 w-10 text-indigo-500" />
-                                        </div>
-                                        <h3 className="text-xl font-bold text-gray-900 mb-2">Coming Soon to {filters.state}</h3>
-                                        <p className="text-gray-500 max-w-md mx-auto mb-8">
-                                            We are currently offering experiences in Punjab, Haryana, and Himachal Pradesh only. 
-                                            Stay tuned as we expand to more states!
-                                        </p>
-                                        <button
-                                            onClick={() => setFilters(prev => ({ ...prev, state: '' }))}
-                                            className="bg-indigo-600 text-white px-6 py-2 rounded-xl font-medium hover:bg-indigo-700 transition"
-                                        >
-                                            Explore other states
-                                        </button>
-                                    </div>
-                                ) : filteredExperiences.length > 0 ? (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                        {filteredExperiences.map(exp => (
-                                            <ExperienceCard key={exp._id} experience={exp} />
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div className="text-center py-24 bg-white rounded-3xl border border-dashed border-gray-200">
-                                        <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                                            <Search className="h-10 w-10 text-gray-300" />
-                                        </div>
-                                        <h3 className="text-xl font-bold text-gray-900 mb-2">No matches found</h3>
-                                        <p className="text-gray-500 max-w-md mx-auto mb-8">We couldn't find any experiences matching your current filters. Try adjusting your search criteria.</p>
-                                        <button
-                                            onClick={() => setFilters({ search: '', category: '', maxPrice: 5000, state: '', sort: 'Recommended' })}
-                                            className="bg-indigo-600 text-white px-6 py-2 rounded-xl font-medium hover:bg-indigo-700 transition"
-                                        >
-                                            Clear all filters
-                                        </button>
-                                    </div>
-                                )}
+                                <h3 className="text-xl font-bold text-gray-900 mb-2">No experiences found</h3>
+                                <p className="text-gray-500 max-w-md mx-auto mb-8">We couldn't find any experiences matching your current filters. Try adjusting your search criteria.</p>
+                                <button
+                                    onClick={() => setFilters({ search: '', category: '', maxPrice: 5000, state: '', sort: 'Recommended' })}
+                                    className="bg-indigo-600 text-white px-6 py-2 rounded-xl font-medium hover:bg-indigo-700 transition shadow-lg shadow-indigo-200"
+                                >
+                                    Clear all filters
+                                </button>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>

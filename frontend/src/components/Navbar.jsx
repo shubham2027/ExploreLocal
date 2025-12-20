@@ -17,15 +17,26 @@ const Navbar = () => {
     return (
         <nav className="fixed w-full top-0 z-50 transition-all duration-300 bg-white/80 backdrop-blur-md border-b border-gray-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between h-16">
-                    <div className="flex items-center">
+                <div className="flex justify-between h-16 items-center relative">
+                    {/* Mobile menu button - Left Side */}
+                    <div className="flex items-center md:hidden z-20">
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="text-gray-600 hover:text-gray-900 focus:outline-none p-2"
+                        >
+                            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                        </button>
+                    </div>
+
+                    {/* Logo - Centered on Mobile, Left on Desktop */}
+                    <div className="flex-1 flex justify-center md:justify-start">
                         <Link to="/" className="flex-shrink-0 flex items-center gap-2">
                             <MapPin className="h-8 w-8 text-indigo-600" />
                             <span className="text-2xl font-bold text-gray-800">ExploreLocal</span>
                         </Link>
                     </div>
 
-                    {/* Desktop Menu */}
+                    {/* Desktop Menu - Right Side */}
                     <div className="hidden md:flex items-center space-x-8">
                         <Link to="/" className="text-gray-600 hover:text-indigo-600 font-medium transition">Home</Link>
                         <Link to="/explore" className="text-gray-600 hover:text-indigo-600 font-medium transition">Explore</Link>
@@ -104,16 +115,9 @@ const Navbar = () => {
                             </div>
                         )}
                     </div>
-
-                    {/* Mobile menu button */}
-                    <div className="md:hidden flex items-center">
-                        <button
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="text-gray-600 hover:text-gray-900 focus:outline-none"
-                        >
-                            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-                        </button>
-                    </div>
+                    
+                    {/* Placeholder for right side on mobile to balance the menu button if needed, or just empty */}
+                    <div className="w-10 md:hidden"></div>
                 </div>
             </div>
 

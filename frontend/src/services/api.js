@@ -44,9 +44,15 @@ export const api = {
         return apiAxios.get('/auth/profile');
     },
 
-    // Host - Create Experience
+    // Host - Experiences
     addExperience: async (experienceData) => {
         return apiAxios.post('/experiences', experienceData);
+    },
+    updateExperience: async (id, experienceData) => {
+        return apiAxios.put(`/experiences/${id}`, experienceData);
+    },
+    deleteExperience: async (id) => {
+        return apiAxios.delete(`/experiences/${id}`);
     },
 
     // Bookings

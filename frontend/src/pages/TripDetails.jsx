@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, ArrowLeft, Trash2, Clock, Loader2, Users, DollarSign, PieChart } from 'lucide-react';
+import { Calendar, MapPin, ArrowLeft, Trash2, Clock, Loader2, Users, DollarSign, PieChart, CheckCircle } from 'lucide-react';
 import { api } from '../services/api';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
@@ -18,10 +18,24 @@ const TripDetails = () => {
 
     const fetchTrip = async () => {
         try {
-            const response = await api.getTripById(id);
-            setTrip(response.data);
+            const [tripRes, bookingsRes] = await Promise.all([
+                api.getTripById(id),
+                api.getMyBookings()
+            ]);
+            
+            const tripData = tripRes.data;
+            setTrip(tripData);
+
+            // Check if all experiences in this trip are already booked
+            if (tripData.experiences && tripData.experiences.length > 0) {
+                const bookedExperienceIds = bookingsRes.data.map(b => b.experience._id || b.experience);
+                const allBooked = tripData.experiences.every(item => 
+                    bookedExperienceIds.includes(item.experience._id)
+                );
+                setIsTripBooked(allBooked);
+            }
         } catch (error) {
-            console.error("Failed to fetch trip", error);
+            console.error("Failed to fetch trip details", error);
         } finally {
             setLoading(false);
         }
@@ -38,12 +52,48 @@ const TripDetails = () => {
         }
     };
 
+    const [bookingLoading, setBookingLoading] = useState(false);
+    const [isTripBooked, setIsTripBooked] = useState(false);
+    const [notification, setNotification] = useState(null);
+
     const handleRemoveExperience = async (expId) => {
         try {
             await api.removeExperienceFromTrip(id, expId);
             fetchTrip(); // Refresh
         } catch (error) {
             console.error("Failed to remove experience", error);
+            setNotification({ message: 'Failed to remove experience', type: 'error' });
+        }
+    };
+
+    const handleBookTrip = async () => {
+        if (!trip.experiences || trip.experiences.length === 0) return;
+        
+        setBookingLoading(true);
+        try {
+            const guests = trip.guests || 1;
+            const bookingDate = trip.startDate || new Date();
+
+            // Create booking promises for all experiences
+            const bookingPromises = trip.experiences.map(item => {
+                return api.createBooking({
+                    experienceId: item.experience._id,
+                    guests: guests,
+                    date: bookingDate,
+                    totalPrice: item.experience.price * guests
+                });
+            });
+
+            await Promise.all(bookingPromises);
+            
+            setNotification({ message: 'Trip booked successfully! All experiences have been booked.', type: 'success' });
+            setIsTripBooked(true);
+            setTimeout(() => navigate('/profile'), 2000);
+        } catch (error) {
+            console.error("Failed to book trip", error);
+            setNotification({ message: 'Failed to book some experiences. Please try again.', type: 'error' });
+        } finally {
+            setBookingLoading(false);
         }
     };
 
@@ -80,6 +130,12 @@ const TripDetails = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <Notification 
+                message={notification?.message} 
+                type={notification?.type} 
+                onClose={() => setNotification(null)} 
+            />
+
             <div className="flex justify-between items-center mb-6">
                 <Link to="/trips" className="flex items-center text-gray-500 hover:text-indigo-600 transition">
                     <ArrowLeft className="h-4 w-4 mr-2" /> Back to My Trips
@@ -220,6 +276,32 @@ const TripDetails = () => {
                                     Based on {trip.experiences.length} experiences
                                 </p>
                             </div>
+
+                            <button
+                                onClick={handleBookTrip}
+                                disabled={bookingLoading || trip.experiences.length === 0 || isTripBooked}
+                                className={`w-full py-3 rounded-xl font-bold shadow-lg transition flex justify-center items-center gap-2 ${
+                                    isTripBooked 
+                                    ? 'bg-green-100 text-green-700 cursor-not-allowed shadow-none' 
+                                    : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200'
+                                } disabled:opacity-70 disabled:cursor-not-allowed`}
+                            >
+                                {bookingLoading ? (
+                                    <>
+                                        <Loader2 className="h-5 w-5 animate-spin" />
+                                        Booking...
+                                    </>
+                                ) : isTripBooked ? (
+                                    <>
+                                        <CheckCircle className="h-5 w-5" />
+                                        Already Booked
+                                    </>
+                                ) : (
+                                    <>
+                                        Book Entire Trip
+                                    </>
+                                )}
+                            </button>
                         </div>
                     </div>
                 </div>

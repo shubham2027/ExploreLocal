@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -20,33 +21,84 @@ import AdminDashboard from './pages/AdminDashboard';
 import MyTrips from './pages/MyTrips';
 import TripDetails from './pages/TripDetails';
 
+const Layout = () => {
+  const location = useLocation();
+  const hideFooter = ['/login', '/register'].includes(location.pathname);
+
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <Navbar />
+      <main className="flex-grow pt-16">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* Protected Routes */}
+          <Route path="/explore" element={
+            <ProtectedRoute>
+              <Explore />
+            </ProtectedRoute>
+          } />
+          <Route path="/experience/:id" element={
+            <ProtectedRoute>
+              <ExperienceDetail />
+            </ProtectedRoute>
+          } />
+          <Route path="/host/apply" element={
+            <ProtectedRoute>
+              <HostApply />
+            </ProtectedRoute>
+          } />
+          <Route path="/host/dashboard" element={
+            <ProtectedRoute>
+              <HostDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/host/add-experience" element={
+            <ProtectedRoute>
+              <AddExperience />
+            </ProtectedRoute>
+          } />
+          <Route path="/booking/:id" element={
+            <ProtectedRoute>
+              <BookingPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/dashboard" element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+
+          {/* Trip Routes */}
+          <Route path="/trips" element={
+            <ProtectedRoute>
+              <MyTrips />
+            </ProtectedRoute>
+          } />
+          <Route path="/trips/:id" element={
+            <ProtectedRoute>
+              <TripDetails />
+            </ProtectedRoute>
+          } />
+        </Routes>
+      </main>
+      {!hideFooter && <Footer />}
+    </div>
+  );
+};
+
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="flex flex-col min-h-screen bg-gray-50">
-          <Navbar />
-          <main className="flex-grow pt-16">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/explore" element={<Explore />} />
-              <Route path="/experience/:id" element={<ExperienceDetail />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/host/apply" element={<HostApply />} />
-              <Route path="/host/dashboard" element={<HostDashboard />} />
-              <Route path="/host/add-experience" element={<AddExperience />} />
-              <Route path="/booking/:id" element={<BookingPage />} />
-              <Route path="/profile" element={<UserProfile />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-
-              {/* Trip Routes */}
-              <Route path="/trips" element={<MyTrips />} />
-              <Route path="/trips/:id" element={<TripDetails />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
+        <Layout />
       </Router>
     </AuthProvider>
   );

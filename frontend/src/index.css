@@ -13,21 +13,6 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-@import "tailwindcss";
-
-@theme {
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
-  --color-primary: #4F46E5;
-  --color-primary-hover: #4338ca;
-  --animate-fade-in: fadeIn 0.5s ease-out;
-  --animate-slide-up: slideUp 0.5s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
 
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px); }

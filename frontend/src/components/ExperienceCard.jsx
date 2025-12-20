@@ -15,7 +15,7 @@ const ExperienceCard = ({ experience }) => {
                         src={experience.image}
                         alt={experience.title}
                         onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'; }}
-                        className="w-full h-full object-cover transition duration-500"
+                        className="w-full h-full object-cover object-left-top transition duration-500"
                     />
                     <div className="absolute top-3 right-3 bg-white px-2 py-1 rounded-lg text-xs font-bold shadow-sm text-indigo-600">
                         {experience.category}

@@ -39,11 +39,12 @@ const ExperienceDetail = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {/* Image Section */}
-                <div className="rounded-2xl overflow-hidden shadow-lg h-[400px] lg:h-[500px]">
+                {/* Image Section */}
+                <div className="flex justify-center items-start">
                     <img
                         src={experience.image}
                         alt={experience.title}
-                        className="w-full h-full object-cover"
+                        className="rounded-2xl shadow-lg max-w-full max-h-[80vh] w-auto h-auto object-contain"
                     />
                 </div>
 

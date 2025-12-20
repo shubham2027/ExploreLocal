@@ -2,11 +2,19 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Edit, Trash2, TrendingUp, Users, DollarSign, Star, Calendar } from 'lucide-react';
 import { api } from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
 const HostDashboard = () => {
+    const { user } = useAuth();
     const [experiences, setExperiences] = useState([]);
     const [stats, setStats] = useState({ totalEarnings: 0, activeBookings: 0, totalGuests: 0 });
     const [loading, setLoading] = useState(true);
+    
+    // Delete Modal State
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [experienceToDelete, setExperienceToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -15,11 +23,14 @@ const HostDashboard = () => {
                     api.getExperiences(),
                     api.getHostStats()
                 ]);
-                // Filter specifically for this host if getExperiences returns all
-                // Assuming backend for getExperiences might return all, but we want to show "My Experiences"
-                // Ideally backend should have getMyExperiences. For now assuming filtering or just taking slice as done before but let's try to be more real if possible or stick to the previous mock logic for experiences + real stats.
-                // The previous code did: setExperiences(response.data.slice(0, 3));
-                setExperiences(expRes.data.slice(0, 3));
+                
+                // Filter experiences for the current host
+                // Assuming exp.host is populated with an object containing _id
+                const myExperiences = expRes.data.filter(exp => 
+                    (exp.host?._id === user?._id) || (exp.host === user?._id)
+                );
+                
+                setExperiences(myExperiences);
                 setStats(statsRes.data);
             } catch (error) {
                 console.error("Failed to fetch dashboard data", error);
@@ -28,8 +39,32 @@ const HostDashboard = () => {
             }
         };
 
-        fetchDashboardData();
-    }, []);
+        if (user) {
+            fetchDashboardData();
+        }
+    }, [user]);
+
+    const confirmDelete = (experience) => {
+        setExperienceToDelete(experience);
+        setShowDeleteModal(true);
+    };
+
+    const handleDeleteExperience = async () => {
+        if (!experienceToDelete) return;
+        
+        setIsDeleting(true);
+        try {
+            await api.deleteExperience(experienceToDelete._id);
+            setExperiences(prev => prev.filter(e => e._id !== experienceToDelete._id));
+            setShowDeleteModal(false);
+            setExperienceToDelete(null);
+        } catch (error) {
+            console.error("Failed to delete experience", error);
+            alert("Failed to delete experience. Please try again.");
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     // Mock Stats
     const statCards = [
@@ -91,7 +126,6 @@ const HostDashboard = () => {
                         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                             <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                                 <h2 className="text-xl font-bold text-gray-800">My Experiences</h2>
-                                <button className="text-sm text-indigo-600 font-semibold hover:text-indigo-700">View All</button>
                             </div>
 
                             <div className="divide-y divide-gray-100">
@@ -116,10 +150,18 @@ const HostDashboard = () => {
                                                         </div>
                                                     </div>
                                                     <div className="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-                                                        <button className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition" title="Edit">
+                                                        <Link 
+                                                            to={`/host/edit-experience/${exp._id}`}
+                                                            className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition" 
+                                                            title="Edit"
+                                                        >
                                                             <Edit className="h-5 w-5" />
-                                                        </button>
-                                                        <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" title="Delete">
+                                                        </Link>
+                                                        <button 
+                                                            onClick={() => confirmDelete(exp)}
+                                                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition" 
+                                                            title="Delete"
+                                                        >
                                                             <Trash2 className="h-5 w-5" />
                                                         </button>
                                                     </div>
@@ -167,6 +209,16 @@ const HostDashboard = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Delete Confirmation Modal */}
+            <DeleteConfirmationModal
+                isOpen={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleDeleteExperience}
+                isDeleting={isDeleting}
+                title="Delete Experience"
+                message={`Are you sure you want to delete "${experienceToDelete?.title}"? This action cannot be undone.`}
+            />
         </div>
     );
 };
