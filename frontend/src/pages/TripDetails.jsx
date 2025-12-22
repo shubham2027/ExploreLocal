@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, ArrowLeft, Trash2, Clock, Loader2, Users, DollarSign, PieChart, CheckCircle } from 'lucide-react';
 import { api } from '../services/api';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
+import Notification from '../components/Notification';
 
 const TripDetails = () => {
     const { id } = useParams();
@@ -22,14 +23,14 @@ const TripDetails = () => {
                 api.getTripById(id),
                 api.getMyBookings()
             ]);
-            
+
             const tripData = tripRes.data;
             setTrip(tripData);
 
             // Check if all experiences in this trip are already booked
             if (tripData.experiences && tripData.experiences.length > 0) {
                 const bookedExperienceIds = bookingsRes.data.map(b => b.experience._id || b.experience);
-                const allBooked = tripData.experiences.every(item => 
+                const allBooked = tripData.experiences.every(item =>
                     bookedExperienceIds.includes(item.experience._id)
                 );
                 setIsTripBooked(allBooked);
@@ -68,7 +69,7 @@ const TripDetails = () => {
 
     const handleBookTrip = async () => {
         if (!trip.experiences || trip.experiences.length === 0) return;
-        
+
         setBookingLoading(true);
         try {
             const guests = trip.guests || 1;
@@ -85,7 +86,7 @@ const TripDetails = () => {
             });
 
             await Promise.all(bookingPromises);
-            
+
             setNotification({ message: 'Trip booked successfully! All experiences have been booked.', type: 'success' });
             setIsTripBooked(true);
             setTimeout(() => navigate('/profile'), 2000);
@@ -94,6 +95,17 @@ const TripDetails = () => {
             setNotification({ message: 'Failed to book some experiences. Please try again.', type: 'error' });
         } finally {
             setBookingLoading(false);
+        }
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return null;
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return null; // Invalid date
+            return date.toLocaleDateString();
+        } catch (error) {
+            return null;
         }
     };
 
@@ -130,10 +142,10 @@ const TripDetails = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <Notification 
-                message={notification?.message} 
-                type={notification?.type} 
-                onClose={() => setNotification(null)} 
+            <Notification
+                message={notification?.message}
+                type={notification?.type}
+                onClose={() => setNotification(null)}
             />
 
             <div className="flex justify-between items-center mb-6">
@@ -162,8 +174,8 @@ const TripDetails = () => {
                         </div>
                         <div className="flex items-center">
                             <Calendar className="h-5 w-5 mr-2 text-indigo-500" />
-                            {trip.startDate && trip.endDate ? (
-                                <span>{new Date(trip.startDate).toLocaleDateString()} — {new Date(trip.endDate).toLocaleDateString()}</span>
+                            {formatDate(trip.startDate) ? (
+                                <span>{formatDate(trip.startDate)} — {formatDate(trip.endDate) || '...'}</span>
                             ) : (
                                 <span>Dates not set</span>
                             )}
@@ -280,11 +292,10 @@ const TripDetails = () => {
                             <button
                                 onClick={handleBookTrip}
                                 disabled={bookingLoading || trip.experiences.length === 0 || isTripBooked}
-                                className={`w-full py-3 rounded-xl font-bold shadow-lg transition flex justify-center items-center gap-2 ${
-                                    isTripBooked 
-                                    ? 'bg-green-100 text-green-700 cursor-not-allowed shadow-none' 
+                                className={`w-full py-3 rounded-xl font-bold shadow-lg transition flex justify-center items-center gap-2 ${isTripBooked
+                                    ? 'bg-green-100 text-green-700 cursor-not-allowed shadow-none'
                                     : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200'
-                                } disabled:opacity-70 disabled:cursor-not-allowed`}
+                                    } disabled:opacity-70 disabled:cursor-not-allowed`}
                             >
                                 {bookingLoading ? (
                                     <>

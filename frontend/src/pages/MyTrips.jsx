@@ -31,9 +31,10 @@ const MyTrips = () => {
     const fetchTrips = async () => {
         try {
             const response = await api.getTrips();
-            setTrips(response.data);
+            setTrips(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error("Failed to fetch trips", error);
+            setTrips([]);
         } finally {
             setLoading(false);
         }
@@ -71,6 +72,17 @@ const MyTrips = () => {
             console.error("Failed to delete trip", error);
         } finally {
             setIsDeleting(false);
+        }
+    };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return null;
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return null; // Invalid date
+            return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        } catch (error) {
+            return null;
         }
     };
 
@@ -141,21 +153,21 @@ const MyTrips = () => {
 
                                 <div className="p-6 pt-0 flex-grow flex flex-col">
                                     <div className="bg-white w-16 h-16 rounded-2xl shadow-lg -mt-10 mb-4 flex items-center justify-center text-2xl font-bold text-indigo-600 relative z-10 group-hover:scale-110 transition-transform">
-                                        {trip.title.charAt(0).toUpperCase()}
+                                        {(trip.title && trip.title.length > 0) ? trip.title.charAt(0).toUpperCase() : '?'}
                                     </div>
 
-                                    <h3 className="text-2xl font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">{trip.title}</h3>
+                                    <h3 className="text-2xl font-bold text-gray-900 mb-1 group-hover:text-indigo-600 transition-colors">{trip.title || 'Untitled Trip'}</h3>
                                     <div className="flex items-center text-gray-500 text-sm mb-4">
                                         <MapPin className="h-4 w-4 mr-1 text-indigo-400" />
-                                        {trip.location}
+                                        {trip.location || 'Unknown Location'}
                                     </div>
 
                                     <div className="bg-gray-50 rounded-xl p-4 mb-6">
                                         <div className="flex items-center gap-3 text-sm text-gray-600 mb-2">
                                             <Calendar className="h-4 w-4 text-gray-400" />
-                                            {trip.startDate ? (
+                                            {formatDate(trip.startDate) ? (
                                                 <span className="font-medium">
-                                                    {new Date(trip.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - {trip.endDate ? new Date(trip.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '...'}
+                                                    {formatDate(trip.startDate)} - {formatDate(trip.endDate) || '...'}
                                                 </span>
                                             ) : (
                                                 <span className="italic text-gray-400">Dates not set</span>
