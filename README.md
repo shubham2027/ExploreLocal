@@ -1,72 +1,77 @@
 ExploreLocal
-===============
+=============
 
-ExploreLocal is a MERN (MongoDB, Express, React, Node) sample application that connects travelers with local experiences hosted by passionate locals.
+ExploreLocal is a MERN stack travel marketplace for discovering local experiences, managing trips, booking activities, and handling host/admin workflows.
 
-Features
---------
-- Browse experiences with pagination and filters
-- Host flows to create and manage experiences (planned)
-- Booking flow for authenticated users (planned)
+Current features
+----------------
+- User authentication with register, login, profile lookup, and protected routes
+- Public experience browsing and experience detail pages
+- Host-side experience creation
+- Trip management with create, update, delete, and experience assignment/removal
+- Booking flow with my-bookings and host booking statistics
+- Host application flow and host dashboard screens
+- Admin dashboard with host-request moderation and stats
+
+Project structure
+-----------------
+- `backend/` - Express API, MongoDB/Mongoose models, JWT auth, and route controllers
+- `frontend/` - React + Vite app with routing, auth context, and shared UI components
 
 Tech stack
 ----------
-- Backend: Node.js, Express, Mongoose
-- Frontend: React + Vite
-- Storage: MongoDB (local or Atlas)
+- Backend: Node.js, Express, Mongoose, JSON Web Token, bcryptjs, cors, dotenv
+- Frontend: React 19, Vite, React Router, Axios, Tailwind CSS, lucide-react
+- Database: MongoDB
 
-Quick start (development)
--------------------------
-
+Development setup
+-----------------
 1. Backend
 
 ```bash
 cd backend
 npm install
-# copy .env.example to .env and set MONGO_URI and JWT secrets
 npm run dev
 ```
+
+The backend starts from `backend/src/server.js` and defaults to port `5000`.
 
 2. Frontend
 
 ```bash
 cd frontend
 npm install
-# set VITE_API_URL in .env (e.g. VITE_API_URL=http://localhost:5000)
 npm run dev
 ```
 
-3. Seed the database (after implementing seed script)
+The frontend expects the API at `http://localhost:5000/api` in `frontend/src/services/api.js`.
 
-```bash
-cd backend
-npm run seed
-```
+Available scripts
+-----------------
+Backend:
+- `npm start` - run the API with Node
+- `npm run dev` - run the API with nodemon
+
+Frontend:
+- `npm run dev` - start the Vite dev server
+- `npm run build` - build for production
+- `npm run lint` - run ESLint
+- `npm run preview` - preview the production build locally
 
 Environment variables
 ---------------------
-Create a `.env` file in `backend/` with at least:
+Create `backend/.env` with:
 
-- `MONGO_URI` — MongoDB connection string
-- `JWT_SECRET` — secret for signing access tokens
-- `JWT_REFRESH_SECRET` — secret for refresh tokens
-- `CLOUDINARY_URL` (optional) — for image uploads
+- `MONGO_URI` - MongoDB connection string
+- `JWT_SECRET` - secret used to sign authentication tokens
 
-Add a `.env` in `frontend/` (Vite) with:
+Optional frontend configuration is currently hardcoded to `http://localhost:5000/api`; update `frontend/src/services/api.js` if you need a different backend URL.
 
-- `VITE_API_URL` — base URL of the backend API
-
-Roadmap (short)
-----------------
-1. Replace mock data with a real MongoDB-powered API
-2. Implement JWT auth with refresh tokens and RBAC (user/host/admin)
-3. Add image uploads (Cloudinary or S3) and a seed script
-4. Add tests and CI, then Dockerize the stack
-
-Contributing
-------------
-PRs are welcome. For large changes, open an issue first to discuss design and scope.
+Notes
+-----
+- Protected API routes require a Bearer token stored in local storage by the frontend.
+- There is no database seed script in the current project state.
 
 License
 -------
-This project uses the ISC license (update as needed).
+ISC
